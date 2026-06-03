@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application Security Threat Model</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --ink: #17202a;
+      --muted: #5f6b7a;
+      --line: #d9dee7;
+      --accent: #0f6b6e;
+      --accent-2: #7a4f01;
+      --critical: #8f1d21;
+      --high: #b94a1f;
+      --medium: #9a6a00;
+      --low: #366b2c;
+      --info: #375a7f;
+      --code: #f1f3f6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 24px 56px;
+    }
+
+    header {
+      border-bottom: 4px solid var(--accent);
+      padding: 28px 0 22px;
+      margin-bottom: 24px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    h1 {
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin: 34px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h3 {
+      font-size: 17px;
+      margin: 20px 0 8px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      margin: 12px 0 20px;
+      border: 1px solid var(--line);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0 20px;
+    }
+
+    .csv-table {
+      min-width: 1800px;
+      margin: 0;
+      font-size: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: #eef3f4;
+      font-weight: 700;
+    }
+
+    code {
+      background: var(--code);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.93em;
+    }
+
+    ul {
+      margin: 8px 0 18px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .meta div,
+    .panel,
+    .scenario,
+    .callout {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 12px 0 20px;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 9px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .critical { background: var(--critical); }
+    .high { background: var(--high); }
+    .medium { background: var(--medium); }
+    .low { background: var(--low); }
+    .info { background: var(--info); }
+    .p0 { background: var(--critical); }
+    .p1 { background: var(--high); }
+    .p2 { background: var(--medium); }
+    .p3 { background: var(--low); }
+
+    .scenario {
+      margin: 14px 0;
+    }
+
+    .scenario h3 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 0;
+    }
+
+    .scenario dl {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 7px 14px;
+      margin: 12px 0 0;
+    }
+
+    .scenario dt {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .scenario dd {
+      margin: 0;
+    }
+
+    .callout {
+      border-left: 5px solid var(--accent-2);
+      margin: 12px 0 20px;
+    }
+
+    .toc {
+      columns: 2;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 18px;
+    }
+
+    .toc a {
+      display: block;
+      margin: 4px 0;
+      text-decoration: none;
+    }
+
+    @media (max-width: 820px) {
+      main {
+        padding: 20px 14px 40px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .meta,
+      .grid,
+      .three {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        columns: 1;
+      }
+
+      .scenario dl {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      .panel,
+      .scenario,
+      .callout,
+      table {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Application Security Threat Model</h1>
+      <p>Replace this paragraph with a concise statement of the reviewed system and the purpose of the threat model.</p>
+      <div class="meta">
+        <div><span class="label">Repository</span>REPO_NAME</div>
+        <div><span class="label">Scope</span>SCOPE</div>
+        <div><span class="label">Revision</span>BRANCH_OR_COMMIT</div>
+        <div><span class="label">Date</span>YYYY-MM-DD</div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Table of contents">
+      <a href="#executive-summary">Executive Summary</a>
+      <a href="#scope-methodology">Scope and Methodology</a>
+      <a href="#system-overview">System Overview</a>
+      <a href="#architecture-inventory">Architecture Inventory</a>
+      <a href="#trust-boundaries">Trust Boundaries</a>
+      <a href="#sensitive-assets">Sensitive Assets</a>
+      <a href="#attack-surface">Entry Points and Attack Surface</a>
+      <a href="#data-flows">Data-Flow Summary</a>
+      <a href="#threat-scenarios">Threat Scenarios</a>
+      <a href="#risk-register">Risk Register</a>
+      <a href="#controls">Security Controls Observed</a>
+      <a href="#roadmap">Gaps and Roadmap</a>
+      <a href="#validation-plan">Validation Plan</a>
+      <a href="#coverage">Coverage and Limitations</a>
+      <a href="#appendix">Appendix</a>
+    </nav>
+
+    <section id="executive-summary">
+      <h2>Executive Summary</h2>
+      <div class="grid three">
+        <div class="panel"><span class="label">Overall Risk</span>OVERALL_RISK</div>
+        <div class="panel"><span class="label">Top Concern</span>TOP_CONCERN</div>
+        <div class="panel"><span class="label">Confidence</span>CONFIDENCE</div>
+      </div>
+      <p>Summarize the system-specific security posture, the most important risks, and the highest-leverage fixes.</p>
+    </section>
+
+    <section id="scope-methodology">
+      <h2>Scope and Methodology</h2>
+      <p>Describe what was reviewed, how the repository was inspected, which commands were run, and which assumptions were made.</p>
+    </section>
+
+    <section id="system-overview">
+      <h2>System Overview</h2>
+      <p>Describe product purpose, major components, actors, deployment model, and operational boundaries.</p>
+    </section>
+
+    <section id="architecture-inventory">
+      <h2>Architecture Inventory</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Purpose</th>
+            <th>Key Files</th>
+            <th>Security Relevance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>COMPONENT</td>
+            <td>PURPOSE</td>
+            <td><code>path/to/file</code></td>
+            <td>SECURITY_RELEVANCE</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="trust-boundaries">
+      <h2>Trust Boundaries</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Boundary</th>
+            <th>Crossing Data or Action</th>
+            <th>Current Controls</th>
+            <th>Primary Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BOUNDARY</td>
+            <td>DATA_OR_ACTION</td>
+            <td>CONTROLS</td>
+            <td>RISK</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="sensitive-assets">
+      <h2>Sensitive Assets</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Where It Lives</th>
+            <th>Who Can Access It</th>
+            <th>Impact If Compromised</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ASSET</td>
+            <td>LOCATION</td>
+            <td>ACCESS</td>
+            <td>IMPACT</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="attack-surface">
+      <h2>Entry Points and Attack Surface</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Entry Point</th>
+            <th>Actor</th>
+            <th>Trust Level</th>
+            <th>Relevant Files</th>
+            <th>Threat Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ENTRY_POINT</td>
+            <td>ACTOR</td>
+            <td>TRUST_LEVEL</td>
+            <td><code>path/to/file</code></td>
+            <td>THREAT_NOTES</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="data-flows">
+      <h2>Data-Flow Summary</h2>
+      <p>Describe high-value data flows and where validation, authorization, storage, logging, and egress controls apply.</p>
+    </section>
+
+    <section id="threat-scenarios">
+      <h2>Threat Scenarios</h2>
+      <article class="scenario">
+        <h3>Scenario Title <span class="badge high">High</span></h3>
+        <dl>
+          <dt>Affected flow</dt><dd>AFFECTED_FLOW</dd>
+          <dt>Attacker position</dt><dd>ATTACKER_POSITION</dd>
+          <dt>Preconditions</dt><dd>PRECONDITIONS</dd>
+          <dt>Trust boundary</dt><dd>TRUST_BOUNDARY</dd>
+          <dt>Safe attack narrative</dt><dd>NON_WEAPONIZED_NARRATIVE</dd>
+          <dt>Impact</dt><dd>IMPACT</dd>
+          <dt>Observed controls</dt><dd>OBSERVED_CONTROLS</dd>
+          <dt>Gaps</dt><dd>GAPS</dd>
+          <dt>Recommended mitigation</dt><dd>MITIGATION</dd>
+          <dt>Validation</dt><dd>VALIDATION</dd>
+          <dt>Residual risk</dt><dd>RESIDUAL_RISK</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="risk-register">
+      <h2>Risk Register</h2>
+      <p>Use this CSV-formatted findings table as the risk register.</p>
+      <div class="table-wrap">
+        <table class="csv-table">
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>severity</th>
+              <th>confidence</th>
+              <th>status</th>
+              <th>category</th>
+              <th>title</th>
+              <th>location</th>
+              <th>asset_or_flow</th>
+              <th>actor</th>
+              <th>issue</th>
+              <th>impact</th>
+              <th>evidence</th>
+              <th>fix</th>
+              <th>test</th>
+              <th>scope_notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>R-001</td>
+              <td>high</td>
+              <td>medium</td>
+              <td>needs_validation</td>
+              <td>authorization</td>
+              <td>RISK_TITLE</td>
+              <td>COMPONENT_OR_PATH</td>
+              <td>ASSET_OR_FLOW</td>
+              <td>ATTACKER_STARTING_POSITION</td>
+              <td>THREAT_SCENARIO</td>
+              <td>IMPACT</td>
+              <td>EVIDENCE</td>
+              <td>MITIGATION</td>
+              <td>VALIDATION_PLAN</td>
+              <td>LIKELIHOOD_PRIORITY_RESIDUAL_RISK</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="controls">
+      <h2>Security Controls Observed</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Control</th>
+            <th>Evidence</th>
+            <th>Coverage</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CONTROL</td>
+            <td><code>path/to/file</code></td>
+            <td>COVERAGE</td>
+            <td>NOTES</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="roadmap">
+      <h2>Gaps and Recommended Roadmap</h2>
+      <div class="callout">
+        <strong>Highest-leverage fix:</strong> Describe the single most valuable security improvement.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Priority</th>
+            <th>Recommendation</th>
+            <th>Risk Reduced</th>
+            <th>Implementation Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge p1">P1</span></td>
+            <td>RECOMMENDATION</td>
+            <td>RISK_REDUCED</td>
+            <td>IMPLEMENTATION_NOTES</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="validation-plan">
+      <h2>Validation Plan</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Validation</th>
+            <th>Purpose</th>
+            <th>Suggested Command or Test</th>
+            <th>Expected Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>VALIDATION</td>
+            <td>PURPOSE</td>
+            <td><code>command or test path</code></td>
+            <td>EXPECTED_EVIDENCE</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="coverage">
+      <h2>Review Coverage and Limitations</h2>
+      <p>State what was reviewed, what was not reviewed, and which unknowns affect confidence.</p>
+    </section>
+
+    <section id="appendix">
+      <h2>Appendix</h2>
+      <h3>Key Files Reviewed</h3>
+      <ul>
+        <li><code>path/to/file</code></li>
+      </ul>
+      <h3>Commands Run</h3>
+      <ul>
+        <li><code>command</code></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

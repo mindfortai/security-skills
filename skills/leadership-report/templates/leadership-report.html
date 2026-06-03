@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Executive Security Report</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --ink: #17202a;
+      --muted: #5d6878;
+      --line: #d9dee7;
+      --accent: #174f57;
+      --accent-soft: #e8f1f2;
+      --strong: #276749;
+      --adequate: #2b6cb0;
+      --attention: #9a6700;
+      --high-risk: #a33131;
+      --unknown: #596579;
+      --code: #f0f2f5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 32px 24px 56px;
+    }
+
+    header {
+      padding: 30px 0 24px;
+      margin-bottom: 22px;
+      border-bottom: 4px solid var(--accent);
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    h1 {
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin: 34px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h3 {
+      font-size: 17px;
+      margin: 18px 0 8px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      margin: 12px 0 20px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0 20px;
+    }
+
+    .csv-table {
+      min-width: 1800px;
+      margin: 0;
+      font-size: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: var(--accent-soft);
+      font-weight: 700;
+    }
+
+    ul {
+      margin: 8px 0 18px 22px;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    code {
+      background: var(--code);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.93em;
+    }
+
+    .deck {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 12px 0 20px;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card,
+    .metric,
+    .risk,
+    .callout {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 20px;
+      margin-top: 3px;
+    }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .posture {
+      display: inline-block;
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 800;
+      padding: 5px 12px;
+      white-space: nowrap;
+    }
+
+    .strong { background: var(--strong); }
+    .adequate { background: var(--adequate); }
+    .needs-attention { background: var(--attention); }
+    .high-risk { background: var(--high-risk); }
+    .unknown { background: var(--unknown); }
+
+    .priority {
+      display: inline-block;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 9px;
+      white-space: nowrap;
+    }
+
+    .immediate { background: var(--high-risk); }
+    .days-30 { background: var(--attention); }
+    .days-90 { background: var(--adequate); }
+    .monitor { background: var(--unknown); }
+
+    .risk {
+      border-left: 5px solid var(--attention);
+      margin: 12px 0;
+    }
+
+    .risk.high {
+      border-left-color: var(--high-risk);
+    }
+
+    .risk h3 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .risk dl {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 7px 14px;
+      margin: 12px 0 0;
+    }
+
+    .risk dt {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .risk dd {
+      margin: 0;
+    }
+
+    .callout {
+      border-left: 5px solid var(--accent);
+      margin: 12px 0 20px;
+    }
+
+    .toc {
+      columns: 2;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 18px;
+    }
+
+    .toc a {
+      display: block;
+      margin: 4px 0;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    @media (max-width: 820px) {
+      main {
+        padding: 20px 14px 40px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .deck,
+      .grid,
+      .three {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        columns: 1;
+      }
+
+      .risk dl {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      .card,
+      .metric,
+      .risk,
+      .callout,
+      table {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Executive Security Report</h1>
+      <p>Replace this paragraph with a concise description of the target application, product, or organization and why this report was prepared.</p>
+      <div class="deck">
+        <div class="metric"><span class="label">Target</span><strong>TARGET_NAME</strong></div>
+        <div class="metric"><span class="label">Scope</span><strong>SCOPE</strong></div>
+        <div class="metric"><span class="label">Revision or Window</span><strong>REVISION_OR_WINDOW</strong></div>
+        <div class="metric"><span class="label">Date</span><strong>YYYY-MM-DD</strong></div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Table of contents">
+      <a href="#executive-summary">Executive Summary</a>
+      <a href="#posture">Security Posture</a>
+      <a href="#top-risks">Top Business Risks</a>
+      <a href="#working-well">What Is Working Well</a>
+      <a href="#key-gaps">Key Gaps</a>
+      <a href="#tooling">Dependabot and Tooling</a>
+      <a href="#context">Product Context</a>
+      <a href="#impact">Business Impact</a>
+      <a href="#actions">Executive Actions</a>
+      <a href="#roadmap">30/60/90-Day Roadmap</a>
+      <a href="#metrics">Metrics and Evidence</a>
+      <a href="#technical-findings">Technical Findings CSV</a>
+      <a href="#limitations">Confidence and Limitations</a>
+      <a href="#appendix">Appendix</a>
+    </nav>
+
+    <section id="executive-summary">
+      <h2>One-Page Executive Summary</h2>
+      <div class="callout">
+        <strong>Bottom line:</strong> Summarize the security posture in three to five sentences. Focus on the decision executives need to make next.
+      </div>
+      <p>Explain the most important security themes in plain language: what is protected, what is exposed, how confident the assessment is, and what should happen next.</p>
+    </section>
+
+    <section id="posture">
+      <h2>Overall Security Posture</h2>
+      <div class="grid three">
+        <div class="card"><span class="label">Posture Rating</span><span class="posture needs-attention">Needs Attention</span></div>
+        <div class="card"><span class="label">Business Impact</span>BUSINESS_IMPACT</div>
+        <div class="card"><span class="label">Confidence</span>CONFIDENCE</div>
+      </div>
+      <p>Explain why this rating was chosen, including what evidence increased or limited confidence.</p>
+    </section>
+
+    <section id="top-risks">
+      <h2>Top Business Risks</h2>
+      <p>Summarize the most important CSV findings in plain business language.</p>
+      <div class="table-wrap">
+        <table class="csv-table">
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>severity</th>
+              <th>confidence</th>
+              <th>status</th>
+              <th>category</th>
+              <th>title</th>
+              <th>location</th>
+              <th>asset_or_flow</th>
+              <th>actor</th>
+              <th>issue</th>
+              <th>impact</th>
+              <th>evidence</th>
+              <th>fix</th>
+              <th>test</th>
+              <th>scope_notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>R-001</td>
+              <td>high</td>
+              <td>medium</td>
+              <td>needs_validation</td>
+              <td>authorization</td>
+              <td>RISK_TITLE</td>
+              <td>CODE_CONFIG_OR_TOOLING_SOURCE</td>
+              <td>ASSET_OR_FLOW</td>
+              <td>AFFECTED_ACTOR</td>
+              <td>PLAIN_ENGLISH_RISK</td>
+              <td>BUSINESS_IMPACT</td>
+              <td>EVIDENCE_SOURCE</td>
+              <td>RECOMMENDED_ACTION</td>
+              <td>VALIDATION_OR_METRIC</td>
+              <td>OWNER_URGENCY_LIMITATION</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="working-well">
+      <h2>What Is Working Well</h2>
+      <ul>
+        <li>List meaningful controls that were actually observed, such as auth middleware, branch protection, dependency monitoring, security tests, or deployment separation.</li>
+      </ul>
+    </section>
+
+    <section id="key-gaps">
+      <h2>Key Gaps And Why They Matter</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Gap</th>
+            <th>Why It Matters</th>
+            <th>Evidence</th>
+            <th>Urgency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GAP</td>
+            <td>BUSINESS_EXPLANATION</td>
+            <td>EVIDENCE_SOURCE</td>
+            <td><span class="priority days-30">30 days</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="tooling">
+      <h2>Dependabot And Security Tooling Summary</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Status</th>
+            <th>Signal</th>
+            <th>Executive Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dependabot</td>
+            <td>Checked | Unavailable | Disabled | Not Checked</td>
+            <td>SUMMARY_OF_FINDINGS</td>
+            <td>BUSINESS_MEANING</td>
+          </tr>
+          <tr>
+            <td>Code scanning / SAST</td>
+            <td>Checked | Unavailable | Disabled | Not Checked</td>
+            <td>SUMMARY_OF_FINDINGS</td>
+            <td>BUSINESS_MEANING</td>
+          </tr>
+          <tr>
+            <td>Secret scanning</td>
+            <td>Checked | Unavailable | Disabled | Not Checked</td>
+            <td>SUMMARY_OF_FINDINGS</td>
+            <td>BUSINESS_MEANING</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="context">
+      <h2>Product And Architecture Context</h2>
+      <p>Describe the product, major components, sensitive data, customer-facing entry points, deployment model, and major trust boundaries in business-friendly language.</p>
+    </section>
+
+    <section id="impact">
+      <h2>Customer, Data, Compliance, And Operational Impact</h2>
+      <div class="grid">
+        <div class="card"><span class="label">Customer Trust</span>CUSTOMER_TRUST_IMPACT</div>
+        <div class="card"><span class="label">Data Exposure</span>DATA_EXPOSURE_IMPACT</div>
+        <div class="card"><span class="label">Compliance</span>COMPLIANCE_IMPACT</div>
+        <div class="card"><span class="label">Operations</span>OPERATIONAL_IMPACT</div>
+      </div>
+    </section>
+
+    <section id="actions">
+      <h2>Recommended Executive Actions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Decision Needed</th>
+            <th>Owner Type</th>
+            <th>Outcome</th>
+            <th>Urgency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ACTION</td>
+            <td>DECISION</td>
+            <td>OWNER</td>
+            <td>OUTCOME</td>
+            <td><span class="priority immediate">Immediate</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="roadmap">
+      <h2>30/60/90-Day Security Roadmap</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Timeframe</th>
+            <th>Focus</th>
+            <th>Expected Improvement</th>
+            <th>Evidence Of Completion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0-30 days</td>
+            <td>FOCUS</td>
+            <td>IMPROVEMENT</td>
+            <td>EVIDENCE</td>
+          </tr>
+          <tr>
+            <td>31-60 days</td>
+            <td>FOCUS</td>
+            <td>IMPROVEMENT</td>
+            <td>EVIDENCE</td>
+          </tr>
+          <tr>
+            <td>61-90 days</td>
+            <td>FOCUS</td>
+            <td>IMPROVEMENT</td>
+            <td>EVIDENCE</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="metrics">
+      <h2>Metrics And Evidence</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Source</th>
+            <th>Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>METRIC</td>
+            <td>VALUE</td>
+            <td>SOURCE</td>
+            <td>INTERPRETATION</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="technical-findings">
+      <h2>Technical Findings CSV</h2>
+      <p>Use this CSV-formatted table for all technical findings, validated tooling alerts, and material evidence gaps.</p>
+      <div class="table-wrap">
+        <table class="csv-table">
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>severity</th>
+              <th>confidence</th>
+              <th>status</th>
+              <th>category</th>
+              <th>title</th>
+              <th>location</th>
+              <th>asset_or_flow</th>
+              <th>actor</th>
+              <th>issue</th>
+              <th>impact</th>
+              <th>evidence</th>
+              <th>fix</th>
+              <th>test</th>
+              <th>scope_notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>F-001</td>
+              <td>medium</td>
+              <td>high</td>
+              <td>confirmed</td>
+              <td>tooling</td>
+              <td>FINDING_TITLE</td>
+              <td>CODE_CONFIG_OR_TOOLING_SOURCE</td>
+              <td>ASSET_OR_FLOW</td>
+              <td>AFFECTED_ACTOR</td>
+              <td>ISSUE</td>
+              <td>IMPACT</td>
+              <td>EVIDENCE</td>
+              <td>FIX</td>
+              <td>VALIDATION</td>
+              <td>OWNER_URGENCY_LIMITATION</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="limitations">
+      <h2>Confidence, Limitations, And Open Questions</h2>
+      <p>State what was verified, what could not be verified, and what evidence would materially change the posture rating.</p>
+    </section>
+
+    <section id="appendix">
+      <h2>Appendix</h2>
+      <h3>Evidence Sources</h3>
+      <ul>
+        <li><code>path/to/file</code> or tooling source</li>
+      </ul>
+      <h3>Commands Run</h3>
+      <ul>
+        <li><code>command</code></li>
+      </ul>
+      <h3>Files Reviewed</h3>
+      <ul>
+        <li><code>path/to/file</code></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
