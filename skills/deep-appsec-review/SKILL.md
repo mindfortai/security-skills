@@ -1,10 +1,10 @@
 ---
-name: ultrareview
-description: Performs a maximum-depth defensive security review for complex vulnerabilities using mandatory subagent planning, exhaustive todo-driven main-agent investigation, independent subagent validation, local smoke tests/stubs where safe, and final CSV findings only. Use for high-stakes appsec reviews where false positives must be rare and subtle multi-step bugs matter.
+name: deep-appsec-review
+description: Performs maximum-depth defensive security reviews using subagent planning, multi-phase investigation, and independent adversarial validation to minimize false positives. Use when findings drive shipping, compliance, or disclosure decisions and false positives must be rare — materially more expensive than code-review.
 allowed-tools: Read Grep Glob Bash
 ---
 
-# Ultrareview
+# Deep AppSec Review
 
 Use this skill for the deepest security review mode. This is not a fast PR review, checklist audit, scanner triage, or generic best-practices pass. It is a high-effort defensive review intended to find complex, reachable vulnerabilities with an unusually high evidence bar.
 
@@ -16,7 +16,7 @@ The workflow is deliberately expensive:
 4. A validation subagent independently challenges the evidence, reachability, severity, and fixes.
 5. The main agent reports only defensible findings in CSV.
 
-If the environment cannot run subagents or background agents, do not claim to have performed an ultrareview. Say that subagents are unavailable and recommend `repo-review`, `pr-review`, or `security-diff` instead.
+If the environment cannot run subagents or background agents, do not claim to have performed a deep-appsec-review. Say that subagents are unavailable and recommend `code-review` or `pr-review` instead.
 
 ## Non-Negotiable Bar
 
@@ -40,7 +40,7 @@ Spawn a read-heavy planning subagent before the main review begins.
 Prompt shape:
 
 ```text
-You are the ultrareview planning subagent. Do not report final findings.
+You are the deep-appsec-review planning subagent. Do not report final findings.
 Build a security investigation todo list for this repository, PR, branch, or scope.
 Prioritize complex, realistic vulnerabilities and missed trust boundaries.
 Return only:
@@ -62,7 +62,7 @@ After the main agent has candidate findings, spawn a separate validation subagen
 Prompt shape:
 
 ```text
-You are the ultrareview validation subagent. Your job is to disprove, downgrade, or sharpen the candidate findings.
+You are the deep-appsec-review validation subagent. Your job is to disprove, downgrade, or sharpen the candidate findings.
 For each candidate finding, check:
 1. Is the entry point real?
 2. Is the attacker starting position realistic?

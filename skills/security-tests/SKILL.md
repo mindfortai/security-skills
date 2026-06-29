@@ -1,6 +1,6 @@
 ---
 name: security-tests
-description: Converts security findings, threat models, PR review concerns, and suspected vulnerabilities into concrete regression tests. Use when adding or proposing tests that prove an application's security controls keep working.
+description: Converts security findings, threat models, and suspected vulnerabilities into concrete regression tests. Use when adding tests that prove an application's security controls keep working.
 allowed-tools: Read Grep Glob Bash Write
 ---
 

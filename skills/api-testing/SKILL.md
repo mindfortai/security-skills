@@ -1,6 +1,6 @@
 ---
 name: api-testing
-description: Builds safe, authorized API abuse testing plans for applications. Use when testing APIs for broken access control, data exposure, unsafe input handling, replay, rate-limit gaps, business logic abuse, and operational resilience.
+description: Builds safe, authorized API abuse testing plans for applications. Use when testing APIs for broken access control, data exposure, unsafe input handling, replay, rate-limit gaps, or business logic abuse.
 allowed-tools: Read Grep Glob Bash Write
 ---
 

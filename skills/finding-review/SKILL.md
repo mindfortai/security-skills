@@ -1,6 +1,6 @@
 ---
 name: finding-review
-description: Triages cybersecurity findings for validity, exploitability, impact, evidence quality, and remediation. Use when reviewing vulnerability reports, scanner output, pentest findings, bug bounty submissions, or security assessment results.
+description: Triages cybersecurity findings for validity, exploitability, impact, and evidence quality. Use when reviewing vulnerability reports, scanner output, pentest findings, or bug bounty submissions.
 allowed-tools: Read Grep Glob
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: agent-security-review
-description: Reviews LLM and AI agent systems for prompt injection, unsafe tool use, MCP/resource exposure, retrieval and memory leakage, cross-tenant context bleed, approval bypasses, browser/shell delegation risk, and missing security tests.
+description: Reviews LLM and AI agent systems for prompt injection, unsafe tool use, context leakage, approval bypasses, and missing security tests. Use when auditing AI agents, MCP servers, tool routers, retrieval systems, or autonomous workflows.
 allowed-tools: Read Grep Glob Bash
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: supply-chain-review
-description: Reviews SBOM/software composition, recursive dependency CVEs, CI/CD, dependency management, build scripts, release workflows, containers, infrastructure manifests, and repository security settings for supply-chain and deployment risk. Use when testing software composition, vulnerable components, build, and release security posture.
+description: Reviews dependencies, CI/CD, build scripts, release workflows, containers, and repository security settings for supply-chain and deployment risk. Use when testing software composition, vulnerable components, or build and release security posture.
 allowed-tools: Read Grep Glob Bash WebSearch WebFetch
 ---
 
@@ -125,6 +125,8 @@ Look for:
 - Secrets printed to logs, passed to untrusted scripts, exposed to pull requests, embedded in examples/tests, or stored in repo files.
 - Long-lived cloud keys where OIDC or scoped deploy tokens should be used.
 - Shared production credentials used in build, test, and deploy contexts.
+
+For deep cryptography and secrets review (password hashing, encryption modes, JWT verification, webhook signatures, TLS configuration, key management, and crypto agility), see the `code-review` skill.
 
 ### Dependencies
 

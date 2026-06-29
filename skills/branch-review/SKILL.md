@@ -1,6 +1,6 @@
 ---
 name: branch-review
-description: Orchestrates parallel diff-first security/correctness and code-quality audits for a branch or PR, deduplicates findings, weights overlap, and produces one prioritized merge-readiness list. Use when reviewing BASE...HEAD before merge.
+description: Orchestrates parallel security and code-quality audits for a branch or PR, deduplicates findings, and produces one prioritized merge-readiness list. Use when reviewing BASE...HEAD before merge.
 allowed-tools: Read Grep Glob Bash
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Read Grep Glob Bash
 
 Use this skill to run two independent branch audits and synthesize the results:
 
-1. `security-diff`: security, correctness, breakage, feature flags, devex regressions.
+1. `pr-review`: security, correctness, breakage, feature flags, devex regressions.
 2. `code-quality`: maintainability, boundaries, complexity, testability, architecture quality.
 
 The output is one prioritized list for merge readiness.
@@ -51,7 +51,7 @@ Use the same base/head and diff for both audit passes.
 
 When the environment supports background agents or subagents:
 
-- Start one reviewer with `security-diff`.
+- Start one reviewer with `pr-review`.
 - Start one reviewer with `code-quality`.
 - Provide both reviewers the same base/head, diff stat, full diff, and review scope.
 - Instruct both reviewers not to read each other's work until they finish.

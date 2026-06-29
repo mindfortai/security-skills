@@ -1,6 +1,6 @@
 ---
 name: code-quality
-description: Audits a branch or pull request diff for harsh code quality, maintainability, boundary, complexity, testability, and architecture regressions. Use when reviewing BASE...HEAD or PR diffs for code health issues before merge.
+description: Audits a branch or PR diff for maintainability, complexity, testability, and architecture regressions. Use when reviewing BASE...HEAD or PR diffs for code health issues before merge.
 allowed-tools: Read Grep Glob Bash
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Read Grep Glob Bash
 
 Use this skill for a strict diff-first maintainability audit. The goal is to catch code quality regressions introduced by the branch before they become expensive to own.
 
-This skill is intentionally orthogonal to `security-diff`. This one asks: "Will this change make the codebase harder to understand, test, change, operate, or safely extend?"
+This skill is intentionally orthogonal to `pr-review`. This one asks: "Will this change make the codebase harder to understand, test, change, operate, or safely extend?"
 
 ## Ground Rules
 

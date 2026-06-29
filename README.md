@@ -30,7 +30,7 @@ Both methods prompt you to choose a platform (Claude Code, Codex/Agent Skills, o
 ```sh
 ./scripts/install.sh --list                     # list available skills
 ./scripts/install.sh --dry-run                  # preview without writing
-./scripts/install.sh --skill repo-review        # install one skill
+./scripts/install.sh --skill code-review        # install one skill
 ./scripts/install.sh --force                    # replace existing skills
 ./scripts/install.sh --scope project            # install to ./.claude/skills/
 ./scripts/install.sh --platform cursor          # claude | agents | cursor
@@ -49,39 +49,39 @@ Both methods prompt you to choose a platform (Claude Code, Codex/Agent Skills, o
 
 | Skill | Use It When You Need To |
 | --- | --- |
-| `repo-review` | Review an entire repository for real, reachable application security issues. |
-| `ultrareview` | Maximum-depth security review with subagent planning, validation, and final CSV findings. |
-| `pr-review` | Review a PR diff, threat model the changed behavior, and find net-new vulnerabilities. |
-| `branch-review` | Paired security/correctness and code-quality audits, synthesized into one merge-readiness list. |
-| `security-diff` | Audit a branch or PR diff for net-new security issues, correctness bugs, and breakage. |
-| `code-quality` | Audit a diff for maintainability, complexity, testability, and architecture quality. |
-| `code-review` | Review source code, diffs, or implementation plans for focused security issues. |
-| `agent-security-review` | Review LLM, AI agent, MCP, tool-use, retrieval, memory, and approval boundaries. |
+| `code-review` | Review an entire repository for real, reachable application security issues — auth, authz, injection, data exposure, SSRF, crypto/secrets, supply chain, and resilience. |
+| `deep-appsec-review` | Maximum-depth review with mandatory subagent planning, adversarial validation, and a strict evidence bar. Use when false positives must be rare and findings drive shipping, compliance, or disclosure decisions. |
+| `pr-review` | Review a PR or branch diff, threat model the changed behavior, and report net-new security vulnerabilities, correctness bugs, and operability regressions. |
+| `branch-review` | Orchestrate paired security and code-quality audits for a branch, then synthesize one prioritized merge-readiness list. |
+| `code-quality` | Audit a diff for maintainability, complexity, testability, and architecture regressions. |
+| `agent-security-review` | Review LLM, AI agent, MCP, tool-use, retrieval, memory, browser, shell, and approval boundaries. |
 | `access-review` | Test authorization, access control, object ownership, role boundaries, and tenant isolation. |
 | `api-testing` | Build a safe, authorized API abuse testing plan for real app and API workflows. |
 | `security-tests` | Convert findings and threat scenarios into durable regression tests. |
 | `retest` | Retest known findings with code review and targeted local smoke tests. |
-| `supply-chain-review` | Review SBOM, dependency CVEs, CI/CD, release workflows, and supply-chain risk. |
+| `supply-chain-review` | Review dependencies, CI/CD, build scripts, release workflows, containers, and supply-chain risk. |
+| `compliance-review` | Map codebase security controls to compliance frameworks (SOC 2, ISO 27001, NIST CSF, HIPAA, PCI-DSS) and identify gaps. |
 | `finding-review` | Triage vulnerability reports, scanner output, pentest findings, and bug bounty submissions. |
 | `threat-model` | Understand a codebase deeply and produce a polished HTML threat model. |
-| `leadership-report` | Analyze product security posture and produce a non-technical executive report. |
+| `leadership-report` | Produce an executive security posture report for non-technical leaders. |
 
 ## Workflows
 
 | Workflow | Skills |
 | --- | --- |
-| Full repo review | `repo-review` → `security-tests` |
-| High-stakes deep review | `ultrareview` |
+| Full repo review | `code-review` → `security-tests` |
+| High-stakes deep review | `deep-appsec-review` |
 | PR review | `pr-review` |
-| Branch merge-readiness | `branch-review` + `security-diff` + `code-quality` |
+| Branch merge-readiness | `branch-review` (uses `pr-review` + `code-quality`) |
 | Retest known findings | `retest` |
 | AI agent review | `agent-security-review` |
+| Compliance gap analysis | `compliance-review` |
 | Threat model | `threat-model` |
 | Executive report | `leadership-report` |
 
 ```sh
 # Example: full repo review
-./scripts/install.sh --skill repo-review
+./scripts/install.sh --skill code-review
 ./scripts/install.sh --skill security-tests
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: leadership-report
-description: Analyzes a target application, repository, product, or organization with deep application-security rigor, incorporates Dependabot and security-tooling findings when available, and produces an executive security posture report for non-technical leaders.
+description: Produces an executive security posture report for non-technical leaders by analyzing a target application or repository with deep appsec rigor. Use when creating board-ready, founder-facing, or customer-facing security reports.
 allowed-tools: Read Grep Glob Bash Write
 ---
 

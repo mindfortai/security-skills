@@ -1,6 +1,6 @@
 ---
 name: retest
-description: Retests known findings by using findings from the current conversation or asking for a list, then reviewing the relevant code and running targeted local smoke tests when possible. Use when validating whether reported issues are fixed or still reproducible.
+description: Retests known findings against the current code using code review and targeted local smoke tests when possible. Use when validating whether reported issues are fixed or still reproducible.
 allowed-tools: Read Grep Glob Bash
 ---
 

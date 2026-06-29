@@ -1,6 +1,6 @@
 ---
 name: threat-model
-description: Builds a deep understanding of an entire codebase, then produces a professional red-team application security threat model as a standalone HTML report. Use when mapping architecture, data flows, trust boundaries, attack surface, and realistic abuse cases.
+description: Produces a professional red-team application security threat model as a standalone HTML report. Use when mapping architecture, data flows, trust boundaries, attack surface, and realistic abuse cases.
 allowed-tools: Read Grep Glob Bash Write
 ---
 

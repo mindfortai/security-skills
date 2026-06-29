@@ -1,6 +1,6 @@
 ---
 name: access-review
-description: Performs deep defensive reviews of authorization, access control, object ownership, role boundaries, admin boundaries, and tenant isolation. Use when testing for IDOR, BOLA, BFLA, privilege escalation, cross-tenant data access, or broken access-control regressions.
+description: Performs deep defensive reviews of authorization, access control, role boundaries, and tenant isolation. Use when testing for IDOR, BOLA, BFLA, privilege escalation, cross-tenant data access, or broken access-control regressions.
 allowed-tools: Read Grep Glob Bash
 ---
 
