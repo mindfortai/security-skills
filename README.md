@@ -23,7 +23,7 @@ cd security-skills
 ./scripts/install.sh            # install
 ```
 
-Both methods install all skills to `~/.claude/skills/` by default.
+Both methods prompt you to choose a platform (Claude Code, Codex/Agent Skills, or Cursor) and install to the appropriate directory. Pass `--platform` to skip the prompt.
 
 ### Options
 
