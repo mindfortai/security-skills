@@ -125,6 +125,13 @@ Review every domain touched by the change. Be especially suspicious when the cha
 - Login, signup, password reset, invitation, SSO, OAuth, SAML, magic-link, API-key, or service-account changes.
 - Token parsing, verification, expiry, storage, rotation, revocation, cookie flags, redirect handling, and session fixation.
 - Middleware order changes that can bypass auth.
+- Email change, account linking, MFA enrollment or recovery, remember-device, impersonation, support-access, and session step-up changes.
+- JWT algorithm handling, decode-without-verify paths, issuer or audience validation, JWKS refresh behavior, and whether new code trusts token headers or claims before verification.
+- Refresh-token rotation changes: whether old tokens are invalidated, token families are tracked, reuse is detected, and logout, password reset, or account disablement revoke the intended sessions.
+- OAuth/SSO/SAML callback changes: state or nonce validation, redirect URI tampering, issuer mismatch, assertion replay, default role assignment, invite binding, and cross-tenant or cross-environment account confusion.
+- Password reset and magic-link changes: token entropy, single-use guarantees, short expiry, secure delivery, replay resistance, and leakage into logs, analytics, referrers, or error messages.
+- MFA changes: bypass via alternate endpoints, race or replay on challenge completion, backup-code reuse, recovery flow weakening, or failures to require step-up auth before sensitive actions.
+- Cookie and browser-facing auth changes: `HttpOnly`, `Secure`, `SameSite`, path and domain scope, bearer tokens moving into browser storage, and redirects that can strand auth codes or tokens in URLs.
 
 #### Authorization And Tenant Isolation
 - Object-level checks missing from new reads, writes, deletes, exports, and state transitions.
@@ -190,6 +197,10 @@ Look for tests that prove:
 - Tenant A cannot access tenant B.
 - Unauthenticated callers are rejected.
 - Invalid tokens and forged callbacks fail.
+- Expired, malformed, revoked, wrong-issuer, or wrong-audience tokens fail.
+- Logout, password reset, tenant removal, or account disablement invalidate the intended sessions.
+- Refresh-token replay and MFA bypass attempts fail and emit a measurable denial path.
+- Cross-user session reuse, forged magic links, and OAuth state or redirect tampering fail.
 - Malicious input is rejected or safely encoded.
 - Sensitive data is not logged or returned.
 - Limits, timeouts, and replay/idempotency protections hold.
@@ -242,13 +253,14 @@ Lead with a CSV findings list. Keep the changed-flow threat model concise and se
 id,severity,confidence,status,category,title,location,asset_or_flow,actor,issue,impact,evidence,fix,test,scope_notes
 ```
 
-Use `status` values: `net_new`, `newly_exposed`, `regression`, `pre_existing`, `needs_verification`, or `no_confirmed_findings`. Use `category` values: `authorization`, `authentication`, `data-exposure`, `injection`, `ssrf`, `secrets`, `supply-chain`, `llm-agent`, `business-logic`, `abuse`, `correctness`, `operability`, `devex`, or `tests`.
+Use `status` values: `net_new`, `newly_exposed`, `regression`, `pre_existing`, `needs_verification`, or `no_confirmed_findings`. Use `category` values: `authorization`, `authentication`, `session`, `token-handling`, `oauth-sso`, `mfa`, `account-takeover`, `data-exposure`, `injection`, `ssrf`, `secrets`, `supply-chain`, `llm-agent`, `business-logic`, `abuse`, `correctness`, `operability`, `devex`, or `tests`.
 
 Example rows:
 
 ```csv
 F-001,high,high,net_new,authorization,New batch update trusts request tenant id,api/routes/projects.py:74,batch project update,tenant member,The change adds batch updates keyed by tenant_id from the request body without per-project membership checks,Tenant member can modify projects outside their tenant,Diff adds tenant_id body field and service updates all matching ids before policy enforcement,Derive tenant from authenticated actor and authorize each project id,Add cross-tenant batch update denial test,Base origin/main head feature/batch-update
 F-002,medium,high,regression,correctness,Migration drops nullable default used by old workers,db/migrations/20260603.sql:12,job creation flow,background worker,The diff makes status non-null without backfilling rows old workers create without status,Deploy can fail or drop queued work during rolling release,Migration changes constraint while worker code in base still inserts missing status,Backfill and deploy code that writes status before enforcing non-null,Add migration compatibility test,Reviewed BASE...HEAD migration and worker insert path
+F-003,high,high,regression,oauth-sso,OAuth callback stops validating state before account linking,auth/oauth/callback.ts:91,OAuth account linking callback,authenticated user,The change links the provider identity to the signed-in account before checking the stored state nonce,An attacker can bind their provider response to another user's active browser session and take over the linked login path,Diff moves account-linking logic ahead of the existing state check and no replacement validation remains,Validate state and nonce before any account lookup or linking side effect,Add forged OAuth callback denial and cross-user account-linking tests,Reviewed diff and adjacent auth callback helpers
 ```
 
 If no change-introduced issues are found, still emit the header and one `no_confirmed_findings` informational row. Put the changed-flow threat model, pre-existing risks, needs-verification items, coverage, and residual risk after the CSV unless the user asks for CSV only.

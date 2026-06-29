@@ -66,8 +66,15 @@ Prioritize areas where repository-specific evidence shows risk:
 
 ### Authentication and Sessions
 
-- Login, signup, password reset, SSO, OAuth, magic links, API keys, service accounts, JWTs, refresh tokens, session cookies, device trust, logout, and account linking.
-- Look for missing token binding, weak expiry, unsafe redirects, token leakage, insecure cookie flags, confused-deputy flows, and inconsistent auth middleware.
+- Identity surface: login, signup, logout, password reset, email change, invite acceptance, impersonation, support access, SSO, OAuth, SAML, magic links, API keys, service accounts, JWTs, refresh tokens, session cookies, device trust, MFA, and account linking.
+- Entry points and trust transitions: auth routes, callback handlers, middleware, session stores, token issuers/verifiers, account-recovery flows, remember-device state, background jobs, mobile deep links, and admin/support tooling that can bind or switch identity.
+- Session and token lifecycle: token parsing, signature verification, issuer and audience checks, expiry, revocation, rotation, storage, transport, logout invalidation, refresh-token reuse detection, session fixation resistance, and whether privilege changes force re-authentication or session rotation.
+- Account lifecycle binding: signup, invite acceptance, email verification, email change, password reset, account linking, MFA enrollment/recovery, and whether each step proves the user still controls the right identity before issuing a stronger credential.
+- Third-party identity flows: OAuth/SSO/SAML state, nonce, redirect URI, issuer, audience, assertion replay, just-in-time provisioning, default role assignment, account linking, and whether the callback can be confused across tenants, environments, or user accounts.
+- High-risk auth patterns: JWT algorithm confusion, decode-without-verify paths, unsigned token acceptance, weak or missing password-reset expiry, reset token leakage into logs or URLs, MFA bypass through race or replay, magic-link replay, service-account secrets with no rotation path, and support or impersonation flows that skip step-up checks.
+- Cookie and browser controls: `HttpOnly`, `Secure`, `SameSite`, path/domain scoping, CSRF coupling, session identifiers in URLs, browser storage of bearer tokens, and cross-origin callback behavior.
+- Account takeover paths: whether a low-privilege actor can capture another user's session, attach a second identity provider, bypass MFA recovery, swap email ownership, replay refresh tokens, or reuse a stale session after logout, reset, disablement, or tenant removal.
+- Tests should prove auth failures directly: unauthenticated access denied, expired or revoked tokens rejected, wrong issuer or audience rejected, logout invalidates the right session, password reset tokens are single-use, cross-user session reuse fails, forged OAuth callbacks fail, and MFA bypass attempts are denied.
 
 ### Authorization and Tenant Isolation
 
@@ -210,12 +217,13 @@ Lead with a CSV findings list. Keep summaries secondary.
 id,severity,confidence,status,category,title,location,asset_or_flow,actor,issue,impact,evidence,fix,test,scope_notes
 ```
 
-Use `status` values such as `confirmed`, `needs_verification`, `pre_existing`, or `no_confirmed_findings`. Use `category` values such as `authorization`, `authentication`, `injection`, `ssrf`, `file-access`, `data-exposure`, `secrets`, `crypto`, `supply-chain`, `llm-agent`, `business-logic`, `abuse`, or `tests`.
+Use `status` values such as `confirmed`, `needs_verification`, `pre_existing`, or `no_confirmed_findings`. Use `category` values such as `authorization`, `authentication`, `session`, `token-handling`, `oauth-sso`, `mfa`, `account-takeover`, `injection`, `ssrf`, `file-access`, `data-exposure`, `secrets`, `crypto`, `supply-chain`, `llm-agent`, `business-logic`, `abuse`, or `tests`.
 
 Example row:
 
 ```csv
 F-001,high,high,confirmed,authorization,Cross-tenant export lacks tenant filter,api/routes/exports.py:112,export job,tenant member,Export lookup uses user-controlled project_id without membership check,Tenant member can export another tenant's records,Route queues export before policy check and worker trusts queued project_id,Authorize project membership before queueing and re-check in worker,Add cross-tenant export denial test,Reviewed export route worker and tests
+F-002,high,high,confirmed,token-handling,Refresh token remains valid after rotation,auth/refresh.py:84,refresh token rotation flow,former session holder,The refresh handler issues a new refresh token but does not revoke the old token family,A stolen refresh token can mint new sessions after the legitimate user rotates credentials,Reviewed refresh storage logic and found no token-family invalidation or reuse detection,Invalidate the prior token family on rotation and record reuse as a security event,Add a rotated refresh token reuse denial test,Reviewed auth handlers token store and tests
 ```
 
 If no confirmed findings are found, still emit the header and one `no_confirmed_findings` informational row. Put needs-verification items, coverage, residual risk, commands run, and summary after the CSV unless the user asks for CSV only.
