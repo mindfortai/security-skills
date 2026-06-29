@@ -158,7 +158,8 @@ if [ -z "$source_dir" ] || [ ! -d "$source_dir" ]; then
     TMP_DIR=$(mktemp -d -t security-skills-install.XXXXXX)
   else
     TMP_DIR="/tmp/security-skills-install.$$-$(date +%s)"
-    mkdir -p "$TMP_DIR"
+    mkdir "$TMP_DIR" 2>/dev/null || die "failed to create secure temp directory"
+    chmod 700 "$TMP_DIR"
   fi
 
   printf 'Skills directory not found locally. Bootstrapping from GitHub...\n'
@@ -255,9 +256,11 @@ install_skill() {
   mkdir -p "$dest_dir"
 
   if [ -e "$target" ]; then
+    [ -L "$target" ] && die "refusing to install over a symlink: $target"
     rm -rf "$target"
   fi
 
+  [ -L "$target" ] && die "refusing to install over a symlink: $target"
   cp -R "$skill_dir" "$target"
   printf 'installed %s -> %s\n' "$skill" "$target"
 }

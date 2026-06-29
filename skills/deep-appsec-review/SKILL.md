@@ -31,7 +31,7 @@ If the environment cannot run subagents or background agents, do not claim to ha
 
 ## Required Subagent Model
 
-Ultrareview requires at least two subagent phases:
+This skill requires at least two subagent phases:
 
 ### Phase A: Planning Subagent
 
