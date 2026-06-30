@@ -49,9 +49,9 @@ Both methods prompt you to choose a platform (Claude Code, Codex/Agent Skills, o
 
 | Skill | Use It When You Need To |
 | --- | --- |
-| `code-review` | Review an entire repository for real, reachable application security issues — auth, authz, injection, data exposure, SSRF, crypto/secrets, supply chain, and resilience. |
+| `code-review` | Review an entire repository for real, reachable application security issues - authentication, sessions, authz, injection, data exposure, SSRF, crypto/secrets, supply chain, and resilience. |
 | `deep-appsec-review` | Maximum-depth review with mandatory subagent planning, adversarial validation, and a strict evidence bar. Use when false positives must be rare and findings drive shipping, compliance, or disclosure decisions. |
-| `pr-review` | Review a PR or branch diff, threat model the changed behavior, and report net-new security vulnerabilities, correctness bugs, and operability regressions. |
+| `pr-review` | Review a PR or branch diff, threat model the changed behavior, and report net-new security vulnerabilities, authentication regressions, correctness bugs, and operability regressions. |
 | `branch-review` | Orchestrate paired security and code-quality audits for a branch, then synthesize one prioritized merge-readiness list. |
 | `code-quality` | Audit a diff for maintainability, complexity, testability, and architecture regressions. |
 | `agent-security-review` | Review LLM, AI agent, MCP, tool-use, retrieval, memory, browser, shell, and approval boundaries. |
